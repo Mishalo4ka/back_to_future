@@ -14,25 +14,28 @@ def new_id():
         return 1
 
 
-def add_task(title):
+def load_tasks():
     try:
         with open("tasks.json", "r") as f:
             tasks = json.load(f)
     except FileNotFoundError:
         tasks = []
+    return tasks
 
-    tasks.append({"id": new_id(), "title": title, "completed": False})
+
+def save_tasks(tasks):
     with open("tasks.json", "w") as f:
         json.dump(tasks, f, indent=4)
 
 
+def add_task(title):
+    tasks = load_tasks()
+    tasks.append({"id": new_id(), "title": title, "completed": False})
+    save_tasks(tasks)
+
+
 def complete_task(task_id):
-    try:
-        with open("tasks.json", "r") as f:
-            tasks = json.load(f)
-    except FileNotFoundError:
-        print("No tasks found.")
-        return
+    tasks = load_tasks()
 
     for task in tasks:
         if task["id"] == task_id:
@@ -42,17 +45,11 @@ def complete_task(task_id):
         print(f"Task with ID {task_id} not found.")
         return
 
-    with open("tasks.json", "w") as f:
-        json.dump(tasks, f, indent=4)
+    save_tasks(tasks)
 
 
 def list_tasks():
-    try:
-        with open("tasks.json", "r") as f:
-            tasks = json.load(f)
-    except FileNotFoundError:
-        print("No tasks found.")
-        return
+    tasks = load_tasks()
 
     for task in tasks:
         status = "*" if task["completed"] else " "
@@ -60,17 +57,9 @@ def list_tasks():
 
 
 def delete_task(task_id):
-    try:
-        with open("tasks.json", "r") as f:
-            tasks = json.load(f)
-    except FileNotFoundError:
-        print("No tasks found.")
-        return
-
+    tasks = load_tasks()
     tasks = [task for task in tasks if task["id"] != task_id]
-
-    with open("tasks.json", "w") as f:
-        json.dump(tasks, f, indent=4)
+    save_tasks(tasks)
 
 
 parser = argparse.ArgumentParser(description="Task Manager")
