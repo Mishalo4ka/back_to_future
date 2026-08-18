@@ -16,17 +16,16 @@ def save_tasks(tasks):
         json.dump(tasks, f, indent=4)
 
 
-def new_id():
-    tasks = load_tasks()
+def new_id(tasks):
     if tasks:
         return max(task["id"] for task in tasks) + 1
     else:
-        return 0
+        return 1
 
 
 def add_task(title):
     tasks = load_tasks()
-    tasks.append({"id": new_id(), "title": title, "completed": False})
+    tasks.append({"id": new_id(tasks), "title": title, "completed": False})
     save_tasks(tasks)
 
 
@@ -55,11 +54,11 @@ def list_tasks():
 def delete_task(task_id):
     tasks = load_tasks()
 
-    if task_id not in [task["id"] for task in tasks]:
+    new_tasks = [task for task in tasks if task["id"] != task_id]
+    if tasks == new_tasks:
         print(f"Task with ID: {task_id} not found.")
     else:
-        tasks = [task for task in tasks if task["id"] != task_id]
-        save_tasks(tasks)
+        save_tasks(new_tasks)
 
 
 parser = argparse.ArgumentParser(description="Task Manager")
