@@ -2,18 +2,6 @@ import argparse
 import json
 
 
-def new_id():
-    try:
-        with open("tasks.json", "r") as f:
-            tasks = json.load(f)
-            if tasks:
-                return max(task["id"] for task in tasks) + 1
-            else:
-                return 1
-    except FileNotFoundError:
-        return 1
-
-
 def load_tasks():
     try:
         with open("tasks.json", "r") as f:
@@ -26,6 +14,14 @@ def load_tasks():
 def save_tasks(tasks):
     with open("tasks.json", "w") as f:
         json.dump(tasks, f, indent=4)
+
+
+def new_id():
+    tasks = load_tasks()
+    if tasks:
+        return max(task["id"] for task in tasks) + 1
+    else:
+        return 0
 
 
 def add_task(title):
