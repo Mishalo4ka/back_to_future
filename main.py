@@ -54,8 +54,12 @@ def list_tasks():
 
 def delete_task(task_id):
     tasks = load_tasks()
-    tasks = [task for task in tasks if task["id"] != task_id]
-    save_tasks(tasks)
+
+    if task_id not in [task["id"] for task in tasks]:
+        print(f"Task with ID: {task_id} not found.")
+    else:
+        tasks = [task for task in tasks if task["id"] != task_id]
+        save_tasks(tasks)
 
 
 parser = argparse.ArgumentParser(description="Task Manager")
